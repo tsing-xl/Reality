@@ -2,6 +2,10 @@ from .interface import Interface
 from .widgets import *
 from .consolelogs import consoleLogout
 
+# Reality Description:
+# Reality is a simple UI framework built on pyglet.
+# It provides basic UI components and an easy-to-use interface for building applications.
+
 class ExampleApp:
     def __init__(self):
         
@@ -12,18 +16,17 @@ class ExampleApp:
         self.interface.runApplication()
     
     def onButtonClick(self) -> None:
-        print('Button clicked! Recomposing interface...')
-        self.interface.composer.recompose()
-        self.interface.widget_handler.rebuild()
+        self.interface.recompose()
         
         # Change to cornflower blue (100, 149, 237)
         # Better way: 
         
         # self.button.updateElement('color', (100, 149, 237))
-        self.button.updateElement('_text', 'Recomposed!')
+        self.button.updateText('Jumped!')
 
-        # Unrecommend way:
-        # self.button.color = (100, 149, 237)
+        self.checkbox = CheckBox(interface = self.interface, x = 50, y = 180, text = 'Enable feature X', is_checked = True)
+        self.checkbox = CheckBox(interface = self.interface, x = 50, y = 150, text = 'Enable feature Y', is_checked = False)
+        self.checkbox = CheckBox(interface = self.interface, x = 50, y = 120, text = 'Enable feature Z', is_checked = False)
 
         self.button.recompose()
 

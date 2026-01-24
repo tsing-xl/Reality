@@ -2,11 +2,11 @@ import pyglet
 
 from .consolelogs import consoleLogout
 from typing import Callable
-from .widgetcomposer import WidgetComposer
 from .interface import Interface
+from .metadata import Metadata
 
-__version__ = '1.1.1'
-__version_v2__ = (1, 1, 1, 'unstable')
+__version__ = '1.2.1'
+__version_v2__ = (1, 2, 1, 'stable')
 
 consoleLogout(f'{__name__}@<PythonModule>', 0, f'Widget module version {__version__}.')
 
@@ -16,9 +16,8 @@ class __basewidget__:
         self._y = 0
         self._width: int = 0
         self._height: int = 0
-        # self._composer: None | WidgetComposer = None
 
-        self._metadata: tuple | None = None
+        self._metadata: Metadata | None = None
     
     def recompose(self) -> None: 
         '''A function used to rebuild this widget. Need overwrite.'''
@@ -27,10 +26,6 @@ class __basewidget__:
     def remove(self) -> None: 
         '''A function used to delete the widget in graphics to free memory and gpus. Need overwrite.'''
         return None
-
-    def checkMotion(self, x: int, y: int) -> None | int: return -1
-    def checkEnable(self) -> None | int: return -1
-    def checkInteractive(self) -> None | int: return -1
 
 class Button(__basewidget__):
     def __init__(
@@ -87,15 +82,18 @@ class Button(__basewidget__):
         self._x, self._y = x, y
         self._width, self._height = width, height
         self._text = text
-        self.t_size = text_size
+        self._t_size = text_size
         self._command = command
         self._interface = interface
-        self._font = text_font
+
+        # TODO: Font support
+        self._font = text_font # Doesn't support yet.
 
         if self._command is None: self.logout(2, 'Command argument have been set to: None.')
 
-        self._disabled = False
+        # self._disabled = False
 
+        # Create button layers
         self._button_layer = pyglet.shapes.Rectangle(
             x = x, 
             y = y, 
@@ -105,38 +103,56 @@ class Button(__basewidget__):
             batch = self._interface.composer.graphics_batch, 
         )
 
+        # Create text layer
         self._text_layer = pyglet.text.Label(
             text, 
             x = x + width / 2, 
             y = y + height / 2, 
             anchor_x = 'center', 
             anchor_y = 'center', 
-            font_size = self.t_size, 
+            font_size = self._t_size, 
             batch = self._interface.composer.text_batch, 
             font_name = self._font,
         )
 
-        self._metadata = (
-            x, y, width, height, 
+        # Metadata for widget handler
+        self._metadata = Metadata(
+            x = self._x,
+            y = self._y,
+            width = self._width,
+            height = self._height,
         )
 
-        self._interface.widget_handler.registerNewWidget(self, self._metadata)
-        
-        self.__preCalculateMetadata()
-    
-    def __preCalculateMetadata(self) -> None:
-        self._metadata_v2 = (
-            self._x, self._y, 
-            self._x + self._width, self._y + self._height, 
-            )
-    
-    def updateElement(self, button_elements: any, element_value: any) -> None:
-        '''Update button elements such as text, size, color, etc.'''
-        if hasattr(self, button_elements):
-            setattr(self, button_elements, element_value)
+        # Register this widget to widget handler
+        # [Outdated features] self._interface.widget_handler.registerNewWidget(self, self._metadata.metadata)
+        self._interface.widget_handler.registerWidget(self)
 
+    # Update elements (update-type)
+    def updateText(self, new_text: str | None = None) -> None:
+        '''Update the text displayed on the button.'''
+        if self._text_layer is None: return
+        self._text_layer.text = new_text
+    
+    # Event handler (ack-type)
+    def command(self) -> None:
+        if self._command is None or not callable(self._command):
+            return self.logout(2, 'The argument command is None or not a callable object, so it will not be triggered.')
+        self._command()
+    
+    def onMouseMotion(self, x: int, y: int) -> None:    
+        if self._x <= x <= self._metadata.metadata_v2[2] and self._y <= y <= self._metadata.metadata_v2[3]:
+            if self._button_layer.color != (0, 0, 0, 150):
+                self._button_layer.color = (0, 0, 0, 150)
+        else:
+            if self._button_layer.color != (0, 0, 0, 50):
+                self._button_layer.color = (0, 0, 0, 50)
+    
+    def onMouseClick(self, x: int, y: int) -> None:
+        if self._x <= x <= self._metadata.metadata_v2[2] and self._y <= y <= self._metadata.metadata_v2[3]:
+            self.command()
+    
+    # Rebuild / Remake type (build-type)
     def recompose(self):
-
         self.remove()
         
         self._button_layer = pyglet.shapes.Rectangle(
@@ -154,32 +170,13 @@ class Button(__basewidget__):
             y = self._y + self._height / 2, 
             anchor_x = 'center', 
             anchor_y = 'center', 
-            font_size = self.t_size, 
+            font_size = self._t_size, 
             batch = self._interface.composer.text_batch, # May change in next versions
             font_name = self._font,
         )
 
         # Register again
-        self._interface.widget_handler.registerNewWidget(self, self._metadata)
-    
-    def onMouseMotion(self, x: int, y: int) -> None:    
-        if self._x <= x <= self._metadata_v2[2] and self._y <= y <= self._metadata_v2[3]:
-            if self._button_layer.color != (0, 0, 0, 150):
-                self._button_layer.color = (0, 0, 0, 150)
-        else:
-            if self._button_layer.color != (0, 0, 0, 50):
-                self._button_layer.color = (0, 0, 0, 50)
-    
-    def onMouseClick(self, x: int, y: int) -> None:
-        if self._disabled: return
-        
-        if self._x <= x <= self._metadata_v2[2] and self._y <= y <= self._metadata_v2[3]:
-            self.command()
-    
-    def command(self) -> None:
-        if self._command is None or not callable(self._command):
-            return self.logout(2, 'The argument command is None or not a callable object, so it will not be triggered.')
-        self._command()
+        self._interface.widget_handler.registerWidget(self)
 
     def remove(self) -> None:
         '''Remove widgets and graphics safely and quickly.'''
@@ -250,17 +247,38 @@ class Label(__basewidget__):
             batch = interface.composer.text_batch, # Uh, probably graphics batch?
         )
 
-        self._metadata = (
-            x, y, self._widget.width, self._widget.height, 
-        )
-
         # Why a label need to be registered?
         # interface.widget_handler.registerNewWidget(self, self._metadata)
     
-    def updateText(self, new_text: str) -> None:
+    def updateTextElement(self, new_text: str) -> None:
         '''Update the text displayed on the label.'''
         if self._widget is None: return
         self._widget.text = new_text
+    
+    def recompose(self):
+        self.remove()
+        
+        # Recompose the label
+        self._widget = pyglet.text.Label(
+            self._text, 
+            x = self._x, 
+            y = self._y, 
+            font_size = self._font_size, 
+            color = self._color, 
+            batch = self._interface.composer.text_batch, 
+        )
+    
+    def remove(self) -> None:
+        '''Remove widgets and graphics safely and quickly.'''
+
+        # To aviod multiple removal errors
+        if self._widget is None: return
+        
+        # Call pyglet delete methods
+        self._widget.delete()
+
+        # Set to None to prevent further access
+        self._widget = None
 
 class Cover(__basewidget__):
     def __init__(
@@ -349,3 +367,59 @@ class Cover(__basewidget__):
         if self._widget is None or self._is_main_cover: return
         
         if self._widget.color != (0, 0, 0, 150): self._widget.color = (0, 0, 0, 50)
+
+class CheckBox(__basewidget__):
+    def __init__(
+            self, 
+            interface: Interface | None = None,
+            x: int = 0,
+            y: int = 0,
+            text: str = '',
+            text_size: int = 12,
+            is_checked: bool = False,
+        ):
+        super().__init__()
+
+        if interface is None: raise SyntaxError('require param composer which is not a Nonetype object.')
+
+        self._interface = interface
+        self._x, self._y = x, y
+        self._text = text
+        self._text_size = text_size
+        self._is_checked = is_checked
+
+        self._check_box = Button(
+            interface = interface,
+            x = x,
+            y = y,
+            width = 20,
+            height = 20,
+            text = '',
+            command = self.switchStatus,
+        )
+
+        self._check_box_upper_layer = pyglet.shapes.Rectangle(
+            x = x + 2,
+            y = y + 2,
+            width = 16,
+            height = 16,
+            color = (255, 255, 255, 100),
+            batch = interface.composer.graphics_batch,
+        )
+
+        self._text_label = Label(
+            interface = interface,
+            x = x + 30,
+            y = y + 5,
+            text = text,
+            text_size = text_size,
+        )
+
+    def switchStatus(self) -> None:
+        self._is_checked = not self._is_checked
+
+        if self._check_box_upper_layer.color == (255, 255, 255, 100):
+            self._check_box_upper_layer.color = (255, 255, 255, 0)
+        
+        else:
+            self._check_box_upper_layer.color = (255, 255, 255, 100)

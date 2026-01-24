@@ -1,0 +1,14 @@
+Reality Project Version 0.00.08-unstable (from april-channel): 
+    + New features: widgethandler -> handler.widgethandler
+    - handler.widgethandler: rebuild() -> recompose()
+        - mouseMotionHandler(x, y) -> motionHandler(x, y, *kw)
+        - mouseClickHandler(x, y) -> clickHandler(x, y, *kw)
+        - registerNewWidget() -> registerWidget()
+    + handler.widgethandler version updated to: 1.0.1-unstable -> 1.1.0-unstable
+
+    + New features: widgetcomposer -> composer.widgetcomposer
+    - composer.widgetcomposer: drawComposer() -> draw()
+
+Version 0.00.00-unstable (from april-channel)
+ + Advanced perfomance.
+ + Rewrite some APIs.

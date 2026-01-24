@@ -1,23 +1,20 @@
 from pyglet import graphics
 from typing import Callable
-from .consolelogs import consoleLogout
+from ..consolelogs import consoleLogout
 
-__version__ = '1.3.0'
-__version_v2__ = (1, 3, 0, 'unstable')
+__version__ = '1.3.1'
+__version_v2__ = (1, 3, 1, 'stable')
 
 consoleLogout(f'{__name__}@<PythonModule>', 0, f'Widgetcomposer module version {__version__}.')
 
 class WidgetComposer:
     def __init__(self, interface_self: any = None):
         
-        # 用于与界面类进行交互。未使用的功能。
         self._interface = interface_self
 
-        # 3 Layers of widget: (background) >> Cover layer (Private) >> Graphics layer >> Text layer >> Top widget layer
-        # 背景层 >> 图形层 >> 文字层 >> 顶层
         self.recompose()
     
-    def drawComposer(self) -> None:
+    def draw(self) -> None:
         self.under_cover_batch.draw()
         self.graphics_batch.draw()
         self.text_batch.draw()

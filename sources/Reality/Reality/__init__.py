@@ -1,10 +1,11 @@
 from .interface import Interface
-from .widgetcomposer import WidgetComposer
-from .widgethandler import WidgetHandler
-from .widgets import Button
+# [Outdated features] from .widgetcomposer import WidgetComposer
+from .composer.widgetcomposer import WidgetComposer
+# [Outdated features] from .widgethandler import WidgetHandler
+from .handler.widgethandler import WidgetHandler
+from .widgets import *
 from .consolelogs import consoleLogout
 from .background import Background
-from .soundhandler import SoundHandler
 
 __version__ = '1.00.00-unstable'
 __version_v2__ = (1, 00, 00, 'unstable')
@@ -20,9 +21,9 @@ __all__ = (
     'Button',
     'Label',
     'Cover', 
+    'CheckBox',
     'Background',
     'consoleLogout',
     '__version__',
     '__version_v2__',
-    'SoundHandler',
 )
