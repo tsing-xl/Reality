@@ -34,12 +34,10 @@ inter.runApplication()
 ```
 Reality.interface
 Reality.widgets
-Reality.widgetcomposer
-Reality.widgethandler
+Reality.composer.widgetcomposer
+Reality.handler.widgethandler
 Reality.font
 Reality.background
-Reality.sound (Not done yet)
-Reality.metadata (Not done yet)
 ```
 
 # Installation
