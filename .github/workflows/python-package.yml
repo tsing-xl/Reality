@@ -28,7 +28,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest pyglet
-        cd sources/0.00.08-unstable
+        cd sources/Reality/0.00.08-unstable
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
