@@ -1,7 +1,7 @@
 # Reality
 
 [![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-BSD-yellow.svg)](https://opensource.org/licenses/BSD)
+[![License: MIT](https://img.shields.io/badge/License-Apache2.0-yellow.svg)](https://opensource.org/licenses/BSD)
 
 Reality 是一个基于 pyglet, 用于构建简单桌面应用的库。
 
