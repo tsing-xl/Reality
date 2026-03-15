@@ -106,64 +106,98 @@ class Interface:
         self.background = Background()
 
         # Bind the handlers.
-        self._bindHandler()
+        # [Outdated] self._bindHandler()
+        self.bindHandler()
 
         # And finally, we can show the interface to users!
         self._window.set_visible(True)
 
         # FIXME: Attention: The animation of startup should delay for ~0.5s to call. The window won't display first.
     
-    # ======== Internal methods ========
-    
     def recompose(self) -> None:
+
+        # Recompose the composer and handler.
         self.composer.recompose()
         self.handler.recompose()
-    
-    # ======== Event handlers ========
 
-    def _bindHandler(self) -> None:
+    def bindHandler(self) -> None:
         # Bind event handlers to the window.
         self._window.set_handler('on_draw', self.interfaceDisplayHandler)
         self._window.set_handler('on_mouse_motion', self.mouseMotionHandler)
         self._window.set_handler('on_mouse_press', self.mouseClickHandler)
         self._window.set_handler('on_close', self.quitApplication)
         self._window.set_handler('on_drop_file', self.fileDropHandler)
+        # TODO: Add custom event handler.
 
     def mouseMotionHandler(self, x, y, dx, dy) -> None:
         '''Handle mouse motion by widget_handler.'''
-        self.widget_handler.motionHandler(x, y)
+        self.handler.motionHandler(x, y)
     
     def mouseClickHandler(self, x, y, button, modifiers) -> None:
         '''Handle mouse click by widget_handler.'''
-        self.widget_handler.clickHandler(x, y)
+        self.handler.clickHandler(x, y)
     
     def fileDropHandler(self, x, y, dropped_files: list) -> None:
         '''Handle file drop by widget_handler.'''
+        # FIXME: Notification to special widgets.
         self._dropped_files = dropped_files
     
     def interfaceDisplayHandler(self, *kw) -> None:
+        '''The display function for interface.'''
+        # Before drawing, clear previous frame first.
         self._window.clear()
-        
+
+        # Draw the background first.
         self.background.drawBackground()
+
+        # Let the composer draw.
         self.composer.draw()
     
     # ======== Application control ========
     def runApplication(self) -> None:
         # self._exc_handler = ExceptionHandler(app.run)
-        self.logout(0, 'the code after runApplication will not be executed except the function returns a value or window quit.')
         # self._exc_handler.execute()
         app.run()
     
+    # FIXME: Outdated features
     def setWindowSize(self, width: int, height: int) -> None:
+        return self.outdatedWarnings('resizeWindow')
         self._w, self._h = width, height
         self._window.width, self._window.height = self._w, self._h
     
-    def setWindowLocation(self, x: int, y: int) -> None:
-        # self._screen = 
+    def resizeWindow(
+            self, 
+            width: int, 
+            height: int, 
+    ) -> None:
+        '''Resize window by calling self._window.set_size.'''
+        self._window.set_size(width, height)
+
+    def relocateWindow(
+            self, 
+            x: int = 0, 
+            y: int = 0, 
+    ) ->  None:
+        '''Re locates the window.'''
         return
 
     def quitApplication(self) -> None:
         self.logout(0, 'Quitting application...')
         self._window.close()
     
-    def logout(self, lvl: int = 0, text: str = '') -> None: logout(f'{__class__.__name__}@{self}', lvl, text)
+    def logout(self, lvl: int = 0, text: str = '') -> None: 
+        '''Prints the log of THIS class.'''
+        logout(f'{__class__.__name__}@{self}', lvl, text)
+    
+    def outdatedWarnings(self, recommend_function = None) -> None: 
+        '''Prints outdated warnings.
+        
+        Usage: 
+        ```
+        def outdated_function(self, *kw) -> None: 
+            return self.outdatedWarning(self.foo)
+            ...
+            [Outdated code]
+        ```
+        '''
+        self.logout(2, f'You are now using a outdated function. Try {recommend_function} instead. (This function will not executed)')
