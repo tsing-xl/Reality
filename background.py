@@ -1,11 +1,6 @@
 from pyglet import image, sprite
 from pathlib import Path
-from .consolelogs import consoleLogout
-
-__version__ = '1.0.0'
-__version_v2__ = (1, 0, 0, 'stable')
-
-consoleLogout(f'{__name__}@<PythonModule>', 0, f'Background module version {__version__}.')
+# from .log4r import logout
 
 class Background:
     def __init__(self, images: str | None = None) -> None:

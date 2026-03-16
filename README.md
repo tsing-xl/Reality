@@ -1,45 +1,28 @@
 # Reality
 
 [![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-BSD-yellow.svg)](https://opensource.org/licenses/BSD)
+[![License: MIT](https://img.shields.io/badge/License-Apache2.0-yellow.svg)](https://opensource.org/licenses/BSD)
 
 Reality 是一个基于 pyglet, 用于构建简单桌面应用的库。
 
-不要将其用于大型项目中。
+该项目仅作为研究 Pyglet 的一部分被开发出来，随时可能停止更新或大量更改调用方式。
 
-# Quick start
+# 快速上手
 
 Reality 的语法很简单，如下：
 
 ```
-from Reality import *
-
-inter = Interface()
-
-def hello():
-    print('Hello, Reality!')
-
-button = Button(inter, x=450, y=5, width=200, height=30, text='Hello World', command=hello)
-
-inter.runApplication()
+# 这一部分的语法需要更新以适应最新的改动。最新的示例代码将会在最新的预览或稳定版本中提供。
 ```
 
-如果对于 Tkinter 很熟悉的话上手此项目应该会很快。
-
-顺带一提我们使用xy坐标来放置和定位组件，网格什么的实现起来太麻烦了。
+考虑到上手的复杂程度，我尽可能的将接口设计的简单。
 
 目前还需要做的有很多，如优化逻辑，统一接口，修复问题，添加新的功能等等，我暂时只能够做到这些。
 
-# API Reference
+# API指引
 ```
-Reality.interface
-Reality.widgets
-Reality.composer.widgetcomposer
-Reality.handler.widgethandler
-Reality.font
-Reality.background
+# 这一部分的内容同样需要更新。
 ```
 
-# Installation
-
-目前还没有上架 PyPI，需要手动下载src中的文件使用。
+# 安装
+暂时不提供直接的安装途径。

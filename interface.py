@@ -10,13 +10,8 @@ from pyglet import window, app
 from .composer.widgetcomposer import WidgetComposer
 from .handler.widgethandler import WidgetHandler
 from .background import Background
-from .consolelogs import consoleLogout
+from .log4r import logout
 # from .exceptionhander import ExceptionHandler
-
-__version = '1.1.0'
-__version_v2__ = (1, 1, 0, 'unstable')
-
-consoleLogout(f'{__name__}@<PythonModule>', 0, f'Interface module version {__version}.')
 
 class Interface:
     def __init__(
@@ -70,71 +65,139 @@ class Interface:
         self._window = window.Window(
             width = width, 
             height = height, 
+
+            # The caption means the title of the window.
             caption = interface_title, 
             resizable = False, 
             vsync = vsync, 
             file_drops = True, 
-            # Invisible first before loading
+
+            # Window should be visible before completely loaded.
             visible = False, 
         )
         
-
-        self._w, self._h = width, height
-        self._title = interface_title
+        # !!!Attention!!! These are outdated features, enable them only in debug mode or compatible older version.
+        # self._w, self._h = width, height
+        # self._title = interface_title
         # self._toplevel_mode = False
         # self._vsync = vsync
-        self._dropped_files: list = []
+        # self._dropped_files: list = []
 
+        # ** These are new features: 
+        self.width: int = width
+        self.height: int = height
+        self.title: str = interface_title
+
+        # If interface is in toplevel mode, Only widgets and frame in toplevel receives user's input.
+        self.is_in_toplevel_mode: bool = False
+
+        # Enables vsync. This setting helps to improve the perfomance in pyglet.
+        self.enable_vsync: bool = vsync
+
+        # the composer of interface. Used to compose the widgets and display them on the window.
         self.composer = WidgetComposer(self)
-        self.widget_handler = WidgetHandler()
+
+        # The handler of interface. Deals with the user's interact.
+        self.handler = WidgetHandler()
+
+        # Outdated: self.widget_handler
+
+        # The background of the window. Supports custom image.
         self.background = Background()
 
-        self._bindHandler()
+        # Bind the handlers.
+        # [Outdated] self._bindHandler()
+        self.bindHandler()
+
+        # And finally, we can show the interface to users!
         self._window.set_visible(True)
-    
-    # ======== Internal methods ========
+
+        # FIXME: Attention: The animation of startup should delay for ~0.5s to call. The window won't display first.
     
     def recompose(self) -> None:
-        self.composer.recompose()
-        self.widget_handler.recompose()
-    
-    # ======== Event handlers ========
 
-    def _bindHandler(self) -> None:
-        # Bind event handlers to the window
+        # Recompose the composer and handler.
+        self.composer.recompose()
+        self.handler.recompose()
+
+    def bindHandler(self) -> None:
+        # Bind event handlers to the window.
         self._window.set_handler('on_draw', self.interfaceDisplayHandler)
         self._window.set_handler('on_mouse_motion', self.mouseMotionHandler)
         self._window.set_handler('on_mouse_press', self.mouseClickHandler)
         self._window.set_handler('on_close', self.quitApplication)
         self._window.set_handler('on_drop_file', self.fileDropHandler)
+        # TODO: Add custom event handler.
 
     def mouseMotionHandler(self, x, y, dx, dy) -> None:
         '''Handle mouse motion by widget_handler.'''
-        self.widget_handler.motionHandler(x, y)
+        self.handler.motionHandler(x, y)
     
     def mouseClickHandler(self, x, y, button, modifiers) -> None:
         '''Handle mouse click by widget_handler.'''
-        self.widget_handler.clickHandler(x, y)
+        self.handler.clickHandler(x, y)
     
     def fileDropHandler(self, x, y, dropped_files: list) -> None:
         '''Handle file drop by widget_handler.'''
+        # FIXME: Notification to special widgets.
         self._dropped_files = dropped_files
     
     def interfaceDisplayHandler(self, *kw) -> None:
+        '''The display function for interface.'''
+        # Before drawing, clear previous frame first.
         self._window.clear()
-        
+
+        # Draw the background first.
         self.background.drawBackground()
+
+        # Let the composer draw.
         self.composer.draw()
     
     # ======== Application control ========
     def runApplication(self) -> None:
         # self._exc_handler = ExceptionHandler(app.run)
-        self.logout(0, 'the code after runApplication will not be executed except the function returns a value or window quit.')
         # self._exc_handler.execute()
         app.run()
+    
+    # FIXME: Outdated features
+    def setWindowSize(self, width: int, height: int) -> None:
+        return self.outdatedWarnings('resizeWindow')
+        self._w, self._h = width, height
+        self._window.width, self._window.height = self._w, self._h
+    
+    def resizeWindow(
+            self, 
+            width: int, 
+            height: int, 
+    ) -> None:
+        '''Resize window by calling self._window.set_size.'''
+        self._window.set_size(width, height)
+
+    def relocateWindow(
+            self, 
+            x: int = 0, 
+            y: int = 0, 
+    ) ->  None:
+        '''Re locates the window.'''
+        return
 
     def quitApplication(self) -> None:
         self.logout(0, 'Quitting application...')
         self._window.close()
     
-    def logout(self, lvl: int = 0, text: str = '') -> None: consoleLogout(f'{__class__.__name__}@{self}', lvl, text)
+    def logout(self, lvl: int = 0, text: str = '') -> None: 
+        '''Prints the log of THIS class.'''
+        logout(f'{__class__.__name__}@{self}', lvl, text)
+    
+    def outdatedWarnings(self, recommend_function = None) -> None: 
+        '''Prints outdated warnings.
+        
+        Usage: 
+        ```
+        def outdated_function(self, *kw) -> None: 
+            return self.outdatedWarning(self.foo)
+            ...
+            [Outdated code]
+        ```
+        '''
+        self.logout(2, f'You are now using a outdated function. Try {recommend_function} instead. (This function will not executed)')

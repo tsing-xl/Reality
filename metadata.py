@@ -1,9 +1,4 @@
-from .consolelogs import consoleLogout
-
-__version__ = '1.0.0'
-__version_v2__ = (1, 0, 0, 'unstable')
-
-consoleLogout(f'{__name__}@<PythonModule>', 0, f'Metadata module version {__version__}.')
+from .log4r import logout
 
 class Metadata:
     def __init__(

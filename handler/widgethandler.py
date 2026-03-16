@@ -1,11 +1,6 @@
 from typing import Callable
-from ..consolelogs import consoleLogout
+from ..log4r import logout
 # from threading import Thread
-
-__version__ = '1.1.0'
-__version_v2__ = (1, 1, 0, 'unstable')
-
-consoleLogout(f'{__name__}@<PythonModule>', 0, f'Widgethandler module version {__version__}.')
 
 class WidgetHandler:
     def __init__(self):
@@ -24,4 +19,4 @@ class WidgetHandler:
 
     def recompose(self) -> None: self.widget_self_list: list | tuple = []
 
-    def logout(self, lvl: int = 0, text: str = '') -> None: consoleLogout(f'{__class__.__name__}@{self}', lvl, text)
+    def logout(self, lvl: int = 0, text: str = '') -> None: logout(f'{__class__.__name__}@{self}', lvl, text)
