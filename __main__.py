@@ -1,7 +1,6 @@
 from .interface import Interface
 from .widgets import *
 # from .log4r import logout
-from .widgets import *
 
 # Reality Description:
 # Reality is a simple UI framework built on pyglet.

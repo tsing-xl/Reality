@@ -1,4 +1,4 @@
-from .consolelogs import consoleLogout
+from .log4r import logout
 
 class Metadata:
     def __init__(
