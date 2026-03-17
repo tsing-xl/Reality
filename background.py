@@ -8,10 +8,10 @@ class Background:
         package_dir = Path(__file__).parent.resolve()
 
         # Load default background if no image provided
-        if images is None: self._img = image.load(filename = package_dir / 'background.png')
-        else: self._img = image.load(filename = images)
+        self.filename = package_dir / 'background.png' if images is None else images
+        self.img = image.load(filename = self.filename)
 
         # TODO: Push it into background batch later
-        self._sprite = sprite.Sprite(self._img, 0 ,0)
+        self._sprite = sprite.Sprite(self.img, 0 ,0)
     
     def drawBackground(self) -> None: self._sprite.draw()

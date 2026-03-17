@@ -1,1 +1,1 @@
-def test(): return
+def test() -> None: return

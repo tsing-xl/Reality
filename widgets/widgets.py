@@ -338,7 +338,8 @@ class Cover(__basewidget__):
         self._interface = interface
         self._is_main_cover = is_main_cover
         self._interface = interface
-        self._x, self._y = x, y
+        self._x: int = x
+        self._y: int = y
         self._width, self._height = width, height
         self._color = color
         self._hidden_color = color[:-1] + (0, )
@@ -347,7 +348,7 @@ class Cover(__basewidget__):
         
         self._metadata = (
             self._x, self._y, self._width, self._height, 
-        )
+        ) # type: ignore
     
     def hiddenCover(self) -> None:
         '''Hide the under cover widget.'''
@@ -470,11 +471,10 @@ class SlideBarHorizonal(__basewidget__):
             y: int, 
             width: int, 
             height: int, 
-            widget_frame: any = None, 
         ):
         super().__init__()
 
-        if widget_frame is None: 
-            self.logout(3, 'While you are using a slide bar, it must be binded with a WidgetFrame-like object. Or nothing will hanppened.')
+        # if widget_frame is None: 
+        #     self.logout(3, 'While you are using a slide bar, it must be binded with a WidgetFrame-like object. Or nothing will hanppened.')
     
     def logout(self, lvl: int = 0, text: str = '') -> None: logout(f'{__class__.__name__}@{self}', lvl, text)

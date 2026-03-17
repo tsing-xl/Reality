@@ -10,6 +10,7 @@ class BaseWidget:
         # TODO: Complete the document.
         # Interface to display.
         self.interface = None
+        self.__classname = __class__.__name__
 
         # The widget's coordinate in pyglet.
         self.x: int = 0
@@ -37,4 +38,8 @@ class BaseWidget:
     def removeWidget(self) -> None:
         '''Remove the widget from memory ant your interface. Can't promise safety but effective.'''
         return
+
+    def logout(self, lvl: int = 0, text: str = '') -> None:
+        '''Logs out what happens in the Widget class.'''
+        return logout(f'{self.__classname}@{self}', lvl, text)
     

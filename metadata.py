@@ -8,6 +8,8 @@ class Metadata:
             width: int, 
             height: int, 
         ):
+        '''The metadata module is used to transfer widget's location infomation prettier.
+        Readable code is more import than perfomance, especially for a little.'''
 
         self._x, self._y = x, y
         self._w, self._h = width, height
